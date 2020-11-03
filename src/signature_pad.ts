@@ -270,11 +270,13 @@ export default class SignaturePad {
       this._strokeBegin(event);
       return;
     }
+    
+    // const x = coords.x
+    // const y = coords.y
+    // const x = event.clientX;
+    // const y = event.clientY;
 
-    const x = event.clientX;
-    const y = event.clientY;
-
-    const point = this._createPoint(x, y);
+    const point = this._createPoint(event);
     const lastPointGroup = this._data[this._data.length - 1];
     const lastPoints = lastPointGroup.points;
     const lastPoint =
@@ -340,11 +342,17 @@ export default class SignaturePad {
     this._ctx.fillStyle = this.penColor;
   }
 
-  private _createPoint(x: number, y: number): Point {
+  private _createPoint = function (event) {
+    console.log("trying")
     const rect = this.canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
 
-    return new Point(x - rect.left, y - rect.top, new Date().getTime());
-  }
+    const x = (event.clientX - rect.left) / (rect.right - rect.left) * (this.canvas.width)
+    const y = (event.clientY - rect.top) / (rect.bottom - rect.top) * (this.canvas.height)
+
+    return new Point(x, y, new Date().getTime());
+};
 
   // Add point to _lastPoints array and generate a new curve if there are enough points (i.e. 3)
   private _addPoint(point: Point): Bezier | null {

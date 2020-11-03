@@ -178,6 +178,15 @@
                     _this._strokeEnd(touch);
                 }
             };
+            this._createPoint = function (event) {
+                console.log("trying");
+                var rect = this.canvas.getBoundingClientRect();
+                var mouseX = event.clientX - rect.left;
+                var mouseY = event.clientY - rect.top;
+                var x = (event.clientX - rect.left) / (rect.right - rect.left) * (this.canvas.width);
+                var y = (event.clientY - rect.top) / (rect.bottom - rect.top) * (this.canvas.height);
+                return new Point(x, y, new Date().getTime());
+            };
             this.velocityFilterWeight = options.velocityFilterWeight || 0.7;
             this.minWidth = options.minWidth || 0.5;
             this.maxWidth = options.maxWidth || 2.5;
@@ -302,9 +311,7 @@
                 this._strokeBegin(event);
                 return;
             }
-            var x = event.clientX;
-            var y = event.clientY;
-            var point = this._createPoint(x, y);
+            var point = this._createPoint(event);
             var lastPointGroup = this._data[this._data.length - 1];
             var lastPoints = lastPointGroup.points;
             var lastPoint = lastPoints.length > 0 && lastPoints[lastPoints.length - 1];
@@ -355,10 +362,6 @@
             this._lastVelocity = 0;
             this._lastWidth = (this.minWidth + this.maxWidth) / 2;
             this._ctx.fillStyle = this.penColor;
-        };
-        SignaturePad.prototype._createPoint = function (x, y) {
-            var rect = this.canvas.getBoundingClientRect();
-            return new Point(x - rect.left, y - rect.top, new Date().getTime());
         };
         SignaturePad.prototype._addPoint = function (point) {
             var _lastPoints = this._lastPoints;
